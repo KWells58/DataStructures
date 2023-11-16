@@ -41,6 +41,9 @@ int main() {
         priorityQueue.push(threads[i]);
     }
 
+    // Open the output file
+    ofstream outputFile("output1.txt");
+
     // Simulate the execution of the jobs
     for (int i = 0; i < m; i++) {
         // Remove the thread with the highest priority from the priority queue
@@ -51,12 +54,16 @@ int main() {
         thread.job_index = i;
         thread.processing_time = processingTimes[i];
 
-        // Output the result
+        // Output the result to the console and the file
         cout << thread.index << " " << i << endl;
+        outputFile << thread.index << " " << i << endl;
 
         // Add the thread back to the priority queue
         priorityQueue.push(thread);
     }
+
+    // Close the output file
+    outputFile.close();
 
     return 0;
 }
