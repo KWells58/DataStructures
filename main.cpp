@@ -8,11 +8,16 @@ struct Thread {
     int index; // Index of the thread
     int job_index; // Index of the job the thread is processing
     int processing_time; // Remaining processing time of the job
+
+    // Overloading the less-than operator for the priority queue
+    bool operator<(const Thread& other) const {
+        return processing_time > other.processing_time || (processing_time == other.processing_time && index > other.index);
+    }
 };
 
 int main() {
     // Read the input file
-    ifstream inputFile("input1");
+    ifstream inputFile("input1.txt");
     int n, m;
     inputFile >> n >> m;
 
@@ -20,6 +25,8 @@ int main() {
     Thread threads[n];
     for (int i = 0; i < n; i++) {
         threads[i].index = i;
+        threads[i].job_index = -1; // Initialize with an invalid job index
+        threads[i].processing_time = 0; // Initialize with zero processing time
     }
 
     // Read the processing times of the jobs
@@ -29,7 +36,7 @@ int main() {
     }
 
     // Initialize the scheduler
-    priority_queue<Thread, vector<Thread>, greater<Thread>> priorityQueue;
+    priority_queue<Thread> priorityQueue;
     for (int i = 0; i < n; i++) {
         priorityQueue.push(threads[i]);
     }
@@ -44,21 +51,11 @@ int main() {
         thread.job_index = i;
         thread.processing_time = processingTimes[i];
 
-        // Decrement the processing time of the job
-        thread.processing_time--;
+        // Output the result
+        cout << thread.index << " " << i << endl;
 
-        // If the processing time of the job is zero, remove the thread from the priority queue
-        if (thread.processing_time == 0) {
-            // Remove the thread from the priority queue
-            priorityQueue.pop();
-        }
-    }
-
-    // Write the output file
-    ofstream outputFile("output1.txt");
-    for (int i = 0; i < m; i++) {
-        // Write the thread index and the start time to the output file
-        outputFile << threads[i].index << " " << threads[i].job_index << endl;
+        // Add the thread back to the priority queue
+        priorityQueue.push(thread);
     }
 
     return 0;
